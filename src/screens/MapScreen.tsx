@@ -188,11 +188,22 @@ const styles = StyleSheet.create({
         marginRight: 5,
     },
     calloutTextContainer: {
-        flexShrink: 1,
+        width: 150,
+        height: 45,
+        backgroundColor: '#fff',
+        paddingVertical: 5,
+        paddingHorizontal: 7,
+        borderRadius: 5,
+        borderWidth: 0.5,
+        borderColor: '#ccc',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.3,
+        shadowRadius: 5,
+        elevation: 3
     },
     calloutText: {
         flexShrink: 1,
-        whiteSpace: 'nowrap',
     },
 });
 
