@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Button, Alert, PermissionsAndroid, Platform, Image, Text } from 'react-native';
-import MapView,{ Marker, Callout } from 'react-native-maps';
+import MapView, { Marker, Callout } from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/RootNavigator';
@@ -38,6 +38,9 @@ const MapScreen: React.FC<Props> = ({ navigation, route }) => {
                         {
                             title: "Location Access Required",
                             message: "This app needs to access your location",
+                            buttonPositive: "OK",
+                            buttonNegative: "Cancel",
+                            buttonNeutral: "Ask Me Later"
                         }
                     );
                     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
@@ -117,14 +120,16 @@ const MapScreen: React.FC<Props> = ({ navigation, route }) => {
                             source={{ uri: user.avatarUrl }}
                             style={{ width: 40, height: 40, borderRadius: 20 }}
                         />
-                        <Callout>
-                            <View>
+                        <Callout tooltip>
+                            <View style={styles.calloutContainer}>
                                 <Image
                                     source={{ uri: user.avatarUrl }}
-                                    style={{ width: 40, height: 40, borderRadius: 20 }}
+                                    style={styles.calloutImage}
                                 />
-                                <Text>{user.name}</Text>
-                                <Text>{user.description}</Text>
+                                <View style={styles.calloutTextContainer}>
+                                    <Text style={styles.calloutText}>{user.name}</Text>
+                                    <Text style={styles.calloutText}>{user.description}</Text>
+                                </View>
                             </View>
                         </Callout>
                     </Marker>
@@ -138,14 +143,16 @@ const MapScreen: React.FC<Props> = ({ navigation, route }) => {
                             source={{ uri: currentUserAvatar }}
                             style={{ width: 40, height: 40, borderRadius: 20 }}
                         />
-                        <Callout>
-                            <View>
+                        <Callout tooltip>
+                            <View style={styles.calloutContainer}>
                                 <Image
                                     source={{ uri: currentUserAvatar }}
-                                    style={{ width: 40, height: 40, borderRadius: 20 }}
+                                    style={styles.calloutImage}
                                 />
-                                <Text>{username}</Text>
-                                <Text>Current Location</Text>
+                                <View style={styles.calloutTextContainer}>
+                                    <Text style={styles.calloutText}>{username}</Text>
+                                    <Text style={styles.calloutText}>Current Location</Text>
+                                </View>
                             </View>
                         </Callout>
                     </Marker>
@@ -162,6 +169,30 @@ const styles = StyleSheet.create({
     },
     map: {
         ...StyleSheet.absoluteFillObject,
+    },
+    calloutContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 5,
+        backgroundColor: 'white',
+        borderRadius: 10,
+        borderColor: '#ccc',
+        borderWidth: 1,
+        width: 'auto',
+        maxWidth: 250,
+    },
+    calloutImage: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        marginRight: 5,
+    },
+    calloutTextContainer: {
+        flexShrink: 1,
+    },
+    calloutText: {
+        flexShrink: 1,
+        whiteSpace: 'nowrap',
     },
 });
 

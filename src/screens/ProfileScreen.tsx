@@ -26,7 +26,6 @@ const ProfileScreen: React.FC<Props> = ({ navigation, route }) => {
                 source={{ uri: `https://github.com/${username}` }}
                 style={styles.webview}
             />
-            <Button title="Back to Map" onPress={() => navigation.navigate('Map')} />
         </View>
     );
 };
