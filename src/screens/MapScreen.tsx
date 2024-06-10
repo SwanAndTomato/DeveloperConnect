@@ -29,7 +29,7 @@ const MapScreen: React.FC<Props> = ({ navigation, route }) => {
 
     useEffect(() => {
         const requestLocationPermission = async () => {
-            if (Platform.OS === 'ios') {
+            if (Platform.OS === 'ios') {;
                 getCurrentLocation();
             } else {
                 try {
