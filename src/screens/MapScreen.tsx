@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Button, Alert, PermissionsAndroid, Platform, Image, Text } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
-import Geolocation from 'react-native-geolocation-service';
+import GetLocation from 'react-native-get-location';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/RootNavigator';
 import users from '../data/usersdb';
@@ -29,7 +29,7 @@ const MapScreen: React.FC<Props> = ({ navigation, route }) => {
 
     useEffect(() => {
         const requestLocationPermission = async () => {
-            if (Platform.OS === 'ios') {;
+            if (Platform.OS === 'ios') {
                 getCurrentLocation();
             } else {
                 try {
@@ -55,32 +55,34 @@ const MapScreen: React.FC<Props> = ({ navigation, route }) => {
             }
         };
 
-        const getCurrentLocation = () => {
-            Geolocation.getCurrentPosition(
-                position => {
-                    const { latitude, longitude } = position.coords;
-                    setCurrentPosition({ latitude, longitude });
-                    setInitialRegion({
-                        latitude,
-                        longitude,
-                        latitudeDelta: 0.01,
-                        longitudeDelta: 0.01,
-                    });
-                },
-                error => {
-                    console.log(error);
-                    useDefaultLocation();
-                },
-                { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-            );
+        const getCurrentLocation = async () => {
+            try {
+                const position = await GetLocation.getCurrentPosition({
+                    enableHighAccuracy: true,
+                    timeout: 15000,
+                });
+                const { latitude, longitude } = position;
+                setCurrentPosition({ latitude, longitude });
+                setInitialRegion({
+                    latitude,
+                    longitude,
+                    latitudeDelta: 0.01,
+                    longitudeDelta: 0.01,
+                });
+            } catch (error) {
+                console.log(error);
+                useDefaultLocation();
+            }
         };
 
         const useDefaultLocation = () => {
             Alert.alert("Error", "Unable to get current location. Using default location.");
-            setCurrentPosition({ latitude: 52.1951, longitude: 0.1313 });
+            const defaultLatitude = 52.1951; // Cambridge, UK
+            const defaultLongitude = 0.1313;
+            setCurrentPosition({ latitude: defaultLatitude, longitude: defaultLongitude });
             setInitialRegion({
-                latitude: 52.1951,
-                longitude: 0.1313,
+                latitude: defaultLatitude,
+                longitude: defaultLongitude,
                 latitudeDelta: 0.01,
                 longitudeDelta: 0.01,
             });
@@ -89,10 +91,16 @@ const MapScreen: React.FC<Props> = ({ navigation, route }) => {
         const fetchGitHubAvatar = async () => {
             try {
                 const response = await fetch(`https://api.github.com/users/${username}`);
-                const data = await response.json();
-                setCurrentUserAvatar(data.avatar_url);
+                if (response.ok) {
+                    const data = await response.json();
+                    setCurrentUserAvatar(data.avatar_url);
+                } else {
+                    console.error('Failed to fetch avatar');
+                    setCurrentUserAvatar(null);
+                }
             } catch (error) {
                 console.error(error);
+                setCurrentUserAvatar(null);
             }
         };
 
